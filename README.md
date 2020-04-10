@@ -1,0 +1,1 @@
+# fastify-node-mongodb-swagger
