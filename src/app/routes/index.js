@@ -1,1 +1,1 @@
-exports.ProductRoutes = require('./products.routes');
+exports.product = require('./products.routes');

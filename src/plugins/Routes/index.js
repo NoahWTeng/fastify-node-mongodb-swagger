@@ -1,8 +1,12 @@
 const fp = require('fastify-plugin');
-const { ProductRoutes } = require('../../app/routes');
+const { forEachObjIndexed } = require('ramda');
+const routes = require('../../app/routes');
 
 module.exports = fp(async function(fastify) {
-  fastify.register(ProductRoutes, {
-    prefix: `/api/${fastify.config.version}/products`
-  });
+  const registerRoutes = (value, key, obj) => {
+    fastify.register(obj[key], {
+      prefix: `/api/${fastify.config.version}/${key}`
+    });
+  };
+  forEachObjIndexed(registerRoutes, routes);
 });
