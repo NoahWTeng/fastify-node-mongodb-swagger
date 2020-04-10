@@ -1,4 +1,4 @@
-const { productsCtrl } = require('../controllers');
+const ctrl = require('../controllers/products.controller');
 const {
   search,
   get,
@@ -8,9 +8,9 @@ const {
 } = require('./schemas/products.schema');
 
 module.exports = async function(fastify) {
-  fastify.get('/:id', { schema: get }, productsCtrl.get);
-  fastify.get('/', { schema: search }, productsCtrl.search);
-  fastify.delete('/:id', { schema: deleted }, productsCtrl.delete);
-  fastify.put('/:id', { schema: update }, productsCtrl.update);
-  fastify.post('/', { schema: create }, productsCtrl.create);
+  fastify.get('/:id', { schema: get }, ctrl(fastify).get);
+  fastify.get('/', { schema: search }, ctrl(fastify).search);
+  fastify.delete('/:id', { schema: deleted }, ctrl(fastify).delete);
+  fastify.put('/:id', { schema: update }, ctrl(fastify).update);
+  fastify.post('/', { schema: create }, ctrl(fastify).create);
 };

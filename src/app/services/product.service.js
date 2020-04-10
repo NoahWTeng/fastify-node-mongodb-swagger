@@ -1,10 +1,13 @@
 const { deepParseJson } = require('deep-parse-json');
 const { search } = require('../../../config');
-const { ProductModel } = require('../models');
 const { objectToDotNotation } = require('../utils');
 
-const ProductsService = {
-  search: async ({
+class ProductService {
+  constructor(db) {
+    this.Model = db.models.product;
+  }
+
+  async search({
     select,
     populate,
     page,
@@ -13,7 +16,7 @@ const ProductsService = {
     sortDirection,
     querySearch,
     queryParams
-  }) => {
+  }) {
     const options = {
       select: select || '',
       populate: populate || [],
@@ -26,23 +29,27 @@ const ProductsService = {
     const queryObject = querySearch
       ? deepParseJson(querySearch)
       : deepParseJson(queryParams);
-    return ProductModel.paginate({ ...queryObject }, options);
-  },
-  get: async id => {
-    const obtained = await ProductModel.findOne({ _id: id });
+    return this.Model.paginate({ ...queryObject }, options);
+  }
+
+  async get(id) {
+    const obtained = await this.Model.findOne({ _id: id });
     return obtained;
-  },
-  create: async data => {
-    const created = await ProductModel.create(data);
+  }
+
+  async create(data) {
+    const created = await this.Model.create(data);
     return created;
-  },
-  delete: async id => {
-    const deleted = await ProductModel.deleteOne({ _id: id });
+  }
+
+  async delete(id) {
+    const deleted = await this.Model.deleteOne({ _id: id });
 
     return { _id: id, deleted: deleted.n > 0 };
-  },
-  update: async (id, data) => {
-    const updated = await ProductModel.findOneAndUpdate(
+  }
+
+  async update(id, data) {
+    const updated = await this.Model.findOneAndUpdate(
       { _id: id },
       { $set: objectToDotNotation({ updatedAt: Date.now(), ...data }) },
       { new: true }
@@ -52,5 +59,6 @@ const ProductsService = {
 
     return updated;
   }
-};
-module.exports = ProductsService;
+}
+
+module.exports = ProductService;

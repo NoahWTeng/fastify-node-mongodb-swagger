@@ -1,6 +1,7 @@
 require('colors');
 const fastify = require('fastify');
 const config = require('../config');
+const { Mongodb, Services, Routes } = require('./plugins');
 
 class Server {
   constructor() {
@@ -8,7 +9,16 @@ class Server {
       logger: config.logger
     });
 
-    this.fastify.decorate('config', config).register(require('./container'));
+    this.fastify
+      .decorate('config', config)
+      .use(require('morgan')('dev'))
+      .register(require('fastify-cors'))
+      .register(require('fastify-compress'))
+      .register(require('fastify-helmet'))
+      .register(require('fastify-swagger'), config.swagger)
+      .register(Mongodb)
+      .register(Services)
+      .register(Routes);
   }
 
   async start() {
